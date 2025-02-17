@@ -102,25 +102,64 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     # declare costs and parents maps
     costs = dict()
     costs[start_state] = 0
-    parents = dict()
-    parents[start_state] = None
+    parents = dict() # dictionary that maps child_state to (parent_state, direction_from_parent_to_child)
+    parents[start_state] = None, None
+
+    # declare closed set (set of nodes for which we've found an optimal path to)
+    closed = set()
 
     # append start state (with cost) to minheap
     h = heuristic(start_state, problem)   # note: heuristic returns a numeric value
-    min_heap.push(0 + h, problem.getStartState()) 
+    min_heap.push(problem.getStartState(), 0+h) 
 
     while not min_heap.isEmpty():
-        curr = min_heap.pop()
-        if problem.isGoalState(curr): # an optimal path to goal state has been confirmed 
+        curr_state = min_heap.pop()
+        # print("curr that was popped from min_heap:", curr_state)
+        curr_g = costs[curr_state]
+        closed.add(curr_state)
+        if problem.isGoalState(curr_state): # an optimal path to goal state has been confirmed 
             # return path ...
-            pass
+            # print("FOUND GOAL STATE!")
+            actions = backtrack(parents, curr_state)
+            return actions
         # expand curr by iterating through its successors
-        for s in problem.getSuccessors(problem.getStartState()):
-            # map to parent (curr) with cost + heuristic
-            h = heuristic(curr, problem)
-            # question: how to determine cost of move from parent to successor?
+        for child_state, child_direction, child_cost in problem.getSuccessors(curr_state):
+            print("child from problem.getSuccessors:", child_state)
+            if child_state in closed:
+                continue
 
+            child_g = curr_g + 1
+            should_update_instead_of_push = False
+            if costs.get(child_state) != None:
+                if child_g >= costs[child_state]:
+                    continue
+                else: 
+                    should_update_instead_of_push = True
 
+            costs[child_state] = child_g
+            parents[child_state] = (curr_state, child_direction)
+
+            # calculate heuristic for this current path to s
+            child_h = heuristic(child_state, problem)
+            
+            if should_update_instead_of_push:
+                min_heap.update(child_state, child_g + h)
+                # print("updating child_state:", child_state, "with cost:", child_g + child_h)
+            else:
+                min_heap.push(child_state, child_g + child_h)
+                # print("pushing child_state:", child_state, "with cost:", child_g + child_h)
+
+            # question: is this okay for determining cost of move from parent to successor?
+            
+def backtrack(parents, goal_state): # note: parents is a dictionary that maps child_state to (parent_state, direction_from_parent_to_child)
+    actions = []
+    
+    parent, direction_to_child = parents[goal_state]
+    while parent != None:
+        actions.append(direction_to_child)
+        parent, direction_to_child = parents[parent]
+    actions.reverse()
+    return actions
 
 # Abbreviations
 astar = aStarSearch
