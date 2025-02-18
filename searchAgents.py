@@ -484,7 +484,18 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # min_distance = float('inf')
+        # closest_dot
+        # for dot in food:
+        #     if util.manhattanDistance(dot, startPosition) < min_distance:
+        #         min_distance = util.manhattanDistance(dot, startPosition)
+        #         closest_dot = dot
+        path_to_closest_dot = search.aStarSearch(problem)
+        return path_to_closest_dot
+            
+        
+        
+            
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -520,7 +531,8 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y]
+        
 
 
 def foodHeuristic(state, problem):
