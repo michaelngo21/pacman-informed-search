@@ -98,7 +98,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     min_heap = util.PriorityQueue() 
 
     start_state = problem.getStartState() # note: state is simply an (x, y) tuple
-    print("START_STATE:", start_state)
+    # print("START_STATE:", start_state)
     # declare costs and parents maps
     costs = dict()
     costs[start_state] = 0
@@ -124,7 +124,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             return actions
         # expand curr by iterating through its successors
         for child_state, child_direction, child_cost in problem.getSuccessors(curr_state):
-            print("child from problem.getSuccessors:", child_state)
+            # print("child from problem.getSuccessors:", child_state)
             if child_state in closed:
                 continue
 
