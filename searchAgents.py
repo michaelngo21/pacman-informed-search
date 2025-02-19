@@ -371,21 +371,38 @@ def cornersHeuristic(state, problem):
     if len(remaining_corners) == 0:
         return 0
 
+    # find the manhattan distance to closest corner
     min_manhattan_dist = float('inf')
     closest_corner_idx = 0
-    # find the manhattan distance to closest corner
     for i in range(len(remaining_corners)):
         corner = remaining_corners[i]
         if abs(x - corner[0]) + abs(y - corner[1]) < min_manhattan_dist:
+        # if ((x - corner[0])**2 + abs(y - corner[1])**2)**.5 < min_manhattan_dist: # EUCLIDEAN
             min_manhattan_dist = abs(x - corner[0]) + abs(y - corner[1])
+            # min_manhattan_dist = ((x - corner[0])**2 + abs(y - corner[1])**2)**.5 # EUCLIDEAN
             closest_corner_idx = i
+    # print(f"min_manhattan_dist = {min_manhattan_dist}, closest_corner = {remaining_corners[i]}]")
 
     # sum up the manhattan distance to the closest corner with the manhattan distance to the other remaining corners
     total_manhattan_dist = min_manhattan_dist
-    for i in range(len(remaining_corners)):
-        next_idx = (closest_corner_idx + i) % len(remaining_corners)
-        total_manhattan_dist += util.manhattanDistance(remaining_corners[i], remaining_corners[closest_corner_idx])
-
+    remaining_corners_list = list(remaining_corners)
+    while len(remaining_corners_list) > 1:
+        curr_pos = remaining_corners_list[closest_corner_idx]
+        remaining_corners_list.pop(closest_corner_idx)
+        min_manhattan_dist = float('inf')
+        # find the manhattan distance to closest corner
+        for i in range(len(remaining_corners_list)):
+            corner = remaining_corners_list[i]
+            if util.manhattanDistance(curr_pos, corner) < min_manhattan_dist:
+                min_manhattan_dist = util.manhattanDistance(curr_pos, corner)
+                # print(f"min_manhattan_dist({min_manhattan_dist}) = abs(x({x}) - corner[0]({corner[0]})) + abs(y({y}) - corner[1]({corner[1]}))")
+                closest_corner_idx = i
+            # if ((x - corner[0])**2 + abs(y - corner[1])**2)**.5 < min_manhattan_dist: # EUCLIDEAN
+            #     # min_manhattan_dist = abs(x - corner[0]) + abs(y - corner[1])
+            #     min_manhattan_dist = ((x - corner[0])**2 + abs(y - corner[1])**2)**.5 # EUCLIDEAN
+            #     closest_corner_idx = i
+        total_manhattan_dist += min_manhattan_dist
+        # print("total_manhattan_dist +=", min_manhattan_dist, "=", total_manhattan_dist, f"between old_corner({curr_pos}) and new_corner({remaining_corners_list[closest_corner_idx]})")
     
     # print("curr (x,y):", (x, y), "remaining_corners:", remaining_corners, "total_manhattan_dist =", total_manhattan_dist)
 
@@ -484,12 +501,6 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        # min_distance = float('inf')
-        # closest_dot
-        # for dot in food:
-        #     if util.manhattanDistance(dot, startPosition) < min_distance:
-        #         min_distance = util.manhattanDistance(dot, startPosition)
-        #         closest_dot = dot
         path_to_closest_dot = search.aStarSearch(problem)
         return path_to_closest_dot
             

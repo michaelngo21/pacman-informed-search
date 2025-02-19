@@ -114,8 +114,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     while not min_heap.isEmpty():
         curr_state = min_heap.pop()
-        # print("curr that was popped from min_heap:", curr_state)
         curr_g = costs[curr_state]
+        # print("curr that was popped from min_heap:", curr_state, f"has g({curr_g}) + h({heuristic(curr_state, problem)}) =", curr_g + heuristic(curr_state, problem))
         closed.add(curr_state)
         if problem.isGoalState(curr_state): # an optimal path to goal state has been confirmed 
             # return path ...
@@ -143,7 +143,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             child_h = heuristic(child_state, problem)
             
             if should_update_instead_of_push:
-                min_heap.update(child_state, child_g + h)
+                min_heap.update(child_state, child_g + child_h)
                 # print("updating child_state:", child_state, "with cost:", child_g + child_h)
             else:
                 min_heap.push(child_state, child_g + child_h)
